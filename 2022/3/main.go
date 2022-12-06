@@ -1,12 +1,27 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
 )
 
 func main() {
+	day := 3
+
+	firstPartSolution := getSolutionPartOne("input.txt")
+	secondPartSolution := getSolutionPartTwo("input.txt")
+
+	printSolution(firstPartSolution, secondPartSolution, day)
+}
+
+func printSolution(firstPart int, secondPart int, day int) {
+	fmt.Println("Day", day, "Part 1:", firstPart)
+	fmt.Println("Day", day, "Part 2:", secondPart)
+}
+
+func getScore(char string) int {
 	var scoreLookup = map[string]int{
 		"a": 1,
 		"b": 2,
@@ -62,12 +77,59 @@ func main() {
 		"Z": 52,
 	}
 
+	score := scoreLookup[char]
+
+	return score
+}
+
+func getSolutionPartOne(input string) int {
+	readFile, err := os.Open("input.txt")
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	result := 0
 
-	content, err := os.ReadFile("input.txt")
+	fileScanner := bufio.NewScanner(readFile)
+
+	fileScanner.Split(bufio.ScanLines)
+
+	for fileScanner.Scan() {
+		text := fileScanner.Text()
+		last := len(text)
+		half := len(text) / 2
+		firstHalf := text[0:half]
+		secondHalf := text[half:last]
+		test := ""
+		score := 0
+
+		secondHalfArray := strings.Split(secondHalf, "")
+
+		for _, character := range secondHalfArray {
+			res := strings.Contains(firstHalf, character)
+
+			if res {
+				if !(strings.Contains(test, character)) {
+					test += character
+					score = getScore(character)
+					result += score
+				}
+			}
+		}
+	}
+
+	readFile.Close()
+
+	return result
+}
+
+func getSolutionPartTwo(input string) int {
+	content, err := os.ReadFile(input)
 	if err != nil {
 		fmt.Println("Err")
 	}
+
+	result := 0
 
 	text := string(content)
 	values := strings.Split(text, "\n")
@@ -90,7 +152,7 @@ func main() {
 			if res {
 				if !(strings.Contains(test, character)) {
 					test += character
-					score = scoreLookup[character]
+					score = getScore(character)
 					result += score
 				}
 			}
@@ -99,5 +161,6 @@ func main() {
 		start = start + 3
 		end = end + 3
 	}
-	fmt.Println(result)
+
+	return result
 }

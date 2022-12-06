@@ -44,7 +44,6 @@ func main() {
 
 		for i := 0; i < count; i++ {
 			characterToMove := stackMap[from][0]
-			// fmt.Println("Move ", characterToMove, " to ", stackMap[to])
 			stackMap[to] = append([]string{characterToMove}, stackMap[to]...)
 			temp := stackMap[from]
 			updatedIndex := RemoveIndex(temp, 0)
